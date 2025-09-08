@@ -22,7 +22,7 @@ The AI can also generate maintenance tasks and schedules for each vehicle, with 
 Platform Features
 Create personal accounts and update profile information.
 Add and manage cars based on subscription plans.
-Transfer vehicle ownership to another user, along with the complete service history.**
+Transfer vehicle ownership to another user, along with the complete service history.
 
 ---
 
@@ -51,7 +51,7 @@ Transfer vehicle ownership to another user, along with the complete service hist
 
 ## Entities
 
-* **User:** 
+* **User** 
 * **Car**
 * **Maintenance**
 * **Reminder**
@@ -73,4 +73,5 @@ Transfer vehicle ownership to another user, along with the complete service hist
 * Payment and subscription handling fully integrated with Moyasar.
 * AI-powered guidance leverages OpenAI APIs for personalized advice.
 * Endpoints are RESTful and tested via Postman.
+
 

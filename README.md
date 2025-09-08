@@ -40,7 +40,7 @@ Transfer vehicle ownership to another user, along with the complete service hist
 
 | API             | Purpose                                                  |
 |-----------------|----------------------------------------------------------|
-| OpenAI          | AI advisor, business idea validation, insights, guidance |
+| OpenAI          | AI advice, insights, guidance |
 | Moyasar         | Payment processing                                       |
 | Moyasar Webhook | Payment callbacks and subscription handling              |
 | WhatsApp        | Sends whatsApp written messages                          |
@@ -73,5 +73,6 @@ Transfer vehicle ownership to another user, along with the complete service hist
 * Payment and subscription handling fully integrated with Moyasar.
 * AI-powered guidance leverages OpenAI APIs for personalized advice.
 * Endpoints are RESTful and tested via Postman.
+
 
 

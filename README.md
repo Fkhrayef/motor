@@ -1,4 +1,4 @@
-﻿# motor
+﻿# Motor
 
 **Version:** 1.0
 **Developers:**  Faisal Al Khrayef - Abdulaziz Alharbi - Mshari Alshammari
@@ -68,11 +68,24 @@ Transfer vehicle ownership to another user, along with the complete service hist
 
 ---
 
+## Usecase Diagram
+
+<img width="1253" height="1374" alt="Motor_Use_Case_Diagram" src="https://github.com/user-attachments/assets/5af9bc9a-2222-4d5d-8fe7-b34bd874681a" />
+
+---
+
+## Figma Design
+
+Link: https://www.figma.com/proto/VxHscp7GQyGOPRy0FQYy6E/Motor?page-id=0%3A1&node-id=1-2&p=f&viewport=25591%2C802%2C0.48&t=X96C0JFMyio1af9B-1&scaling=contain&content-scaling=fixed&starting-point-node-id=1%3A2
+
+---
+
 ## Notes
 
 * Payment and subscription handling fully integrated with Moyasar.
 * AI-powered guidance leverages OpenAI APIs for personalized advice.
 * Endpoints are RESTful and tested via Postman.
+
 
 
 

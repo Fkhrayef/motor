@@ -191,7 +191,9 @@ The application provides **71 RESTful endpoints** across 10 controllers:
 
 ---
 
-## Postman Docs: [Motor Docs](https://documenter.getpostman.com/view/48075154/2sB3HnJywW)
+## Docs:
+
+**Postman Docs**: [Motor Docs](https://documenter.getpostman.com/view/48075154/2sB3HnJywW)
 
 ---
 

@@ -71,7 +71,29 @@ public class RAGService {
                     .bodyToMono(Map.class)
                     .block();
 
-            return response != null && Boolean.TRUE.equals(response.get("success"));
+            if (response == null) {
+                return false;
+            }
+            
+            // Check for "status": "ready" (your actual response format)
+            Object status = response.get("status");
+            if (status != null && "ready".equals(status.toString())) {
+                return true;
+            }
+            
+            // Fallback: check for "success" field (if API changes)
+            Object success = response.get("success");
+            if (success != null) {
+                return Boolean.TRUE.equals(success);
+            }
+            
+            // Fallback: if response exists and has documents_created, consider it successful
+            Object documentsCreated = response.get("documents_created");
+            if (documentsCreated != null && ((Number) documentsCreated).intValue() > 0) {
+                return true;
+            }
+            
+            return false;
 
         } catch (Exception e) {
             throw new ApiException("Failed to process document: " + e.getMessage());

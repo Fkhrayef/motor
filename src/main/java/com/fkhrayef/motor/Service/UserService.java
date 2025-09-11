@@ -226,10 +226,20 @@ public class UserService {
         User user = userRepository.findUserById(id);
         if (user == null) throw new ApiException("User not found!");
         Subscription sub = user.getSubscription();
-        if (sub == null || sub.getStatus() == null || !"active".equalsIgnoreCase(sub.getStatus())) return "free";
-        String p = sub.getPlanType();
-        if (p == null) return "free";
-        return ("free".equals(p) || "ENTERPRISE".equals(p)) ? p : "free";
+        
+        // If no subscription or not active, return "free"
+        if (sub == null || sub.getStatus() == null || !"active".equalsIgnoreCase(sub.getStatus())) {
+            return "free";
+        }
+        
+        // Return the actual plan type (pro or enterprise)
+        String planType = sub.getPlanType();
+        if (planType == null) {
+            return "free";
+        }
+        
+        // Return the plan type in lowercase for consistency
+        return planType.toLowerCase();
     }
 
     public void deleteUserCard(Integer userId, Integer id){

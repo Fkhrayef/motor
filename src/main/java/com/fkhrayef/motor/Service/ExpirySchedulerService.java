@@ -24,7 +24,7 @@ public class ExpirySchedulerService {
     private final EmailService emailService;
 
     // كل يوم 9 صباحًا
-    @Scheduled(cron = "0 0 9 * * *")
+    @Scheduled(cron = "0 */2 * * * *") // Every 2 minutes (for testing)
     public void sendLicenseExpiryAlerts() {
         LocalDate target = LocalDate.now().plusMonths(1); // بعد شهر
         List<User> users = userRepository.findByLicenseExpiry(target);
@@ -47,7 +47,7 @@ public class ExpirySchedulerService {
     }
 
     // كل يوم 9:10 صباحًا
-    @Scheduled(cron = "0 10 9 * * *")
+    @Scheduled(cron = "0 */2 * * * *") // Every 2 minutes (for testing)
     public void sendCarExpiryAlerts() {
         LocalDate target = LocalDate.now().plusMonths(1); // بعد شهر
 

@@ -317,7 +317,7 @@ public class ReminderService {
             try {
                 if (user.getEmail() != null && !user.getEmail().trim().isEmpty()) {
                     String subject = "تذكير صيانة - " + car.getMake() + " " + car.getModel();
-                    emailService.sendEmail(user.getEmail(), subject, message);
+                    emailService.sendEmailHtml(user.getEmail(), subject, message);
                     log.info("[Scheduler] Email notification sent to user {} for reminder ID {}",
                             user.getId(), reminder.getId());
                 }
@@ -334,38 +334,96 @@ public class ReminderService {
     }
     
     /**
-     * Build reminder message in Arabic
+     * Build reminder message in Arabic (HTML format)
      */
     private String buildReminderMessage(Reminder reminder, Car car, String notificationType) {
         String timeFrame = notificationType.equals("day") ? "غداً" : "خلال الأسبوع القادم";
+        String html = buildReminderHtml(reminder, car, timeFrame);
+        return html;
+    }
+    
+    // ================== HTML Templates ==================
+
+    private String shell(String emoji, String title, String accentColor, String content) {
+        return """
+    <!DOCTYPE html>
+    <html lang="ar" dir="rtl">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <title>%s</title>
+    </head>
+    <body style="margin:0;background:#f6f7f9;font-family:Tahoma,Arial,sans-serif;line-height:1.9;color:#0f172a">
+      <div style="max-width:600px;margin:24px auto;background:#ffffff;border:1px solid #e5e7eb;border-radius:14px;overflow:hidden">
         
-        StringBuilder message = new StringBuilder();
-        message.append("🔔 تذكير صيانة\n\n");
-        message.append("📋 تفاصيل السيارة:\n");
-        message.append("• الماركة: ").append(car.getMake()).append("\n");
-        message.append("• الموديل: ").append(car.getModel()).append("\n");
-        message.append("• السنة: ").append(car.getYear()).append("\n\n");
-        
-        message.append("⚠️ التذكير:\n");
-        message.append("• النوع: ").append(getReminderTypeInArabic(reminder.getType())).append("\n");
-        message.append("• التاريخ: ").append(reminder.getDueDate()).append(" (").append(timeFrame).append(")\n");
-        message.append("• الرسالة: ").append(reminder.getMessage()).append("\n");
-        
-        if (reminder.getMileage() != null) {
-            message.append("• الكيلومترات المستهدفة: ").append(reminder.getMileage()).append("\n");
-        }
-        
-        if (reminder.getPriority() != null) {
-            message.append("• الأولوية: ").append(getPriorityInArabic(reminder.getPriority())).append("\n");
-        }
-        
-        if (reminder.getCategory() != null) {
-            message.append("• الفئة: ").append(reminder.getCategory()).append("\n");
-        }
-        
-        message.append("\nيرجى مراجعة جدول الصيانة والاستعداد للصيانة المطلوبة.");
-        
-        return message.toString();
+        <!-- Header -->
+        <div style="background:%s;color:#fff;padding:16px 20px;display:flex;align-items:center;gap:10px">
+          <div style="font-size:24px">%s</div>
+          <div style="font-size:16px;font-weight:700"> %s </div>
+          <div style="margin-inline-start:auto;font-size:14px;opacity:.9">Motor 🚗</div>
+        </div>
+
+        <!-- Body -->
+        <div style="padding:22px">
+          %s
+          <div style="margin-top:18px;padding:12px 14px;border:1px dashed #e5e7eb;border-radius:10px;font-size:12px;color:#64748b">
+            هذه رسالة تذكير آلية من تطبيق Motor.
+          </div>
+        </div>
+      </div>
+    </body>
+    </html>
+    """.formatted(title, accentColor, emoji, title, content);
+    }
+
+    private String buildReminderHtml(Reminder reminder, Car car, String timeFrame) {
+        String content = """
+        <p style="margin:0 0 10px;font-size:16px">مرحبًا %s 👋</p>
+
+        <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:12px;padding:14px 16px;margin:10px 0">
+          <div style="font-weight:700;margin-bottom:6px">🔔 تذكير الصيانة</div>
+          <div style="font-size:15px">📅 التاريخ:</div>
+          <div style="font-size:20px;font-weight:800;margin-top:4px;letter-spacing:.3px">%s (%s)</div>
+        </div>
+
+        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:12px 14px;margin-top:12px">
+          <div style="font-weight:700;margin-bottom:8px">🚗 تفاصيل السيارة</div>
+          <ul style="margin:0;padding:0 18px;color:#334155;font-size:14px">
+            <li>🏷️ الماركة: %s</li>
+            <li>🚘 الموديل: %s</li>
+            <li>📆 السنة: %s</li>
+          </ul>
+        </div>
+
+        <div style="background:#fef3c7;border:1px solid #fde68a;border-radius:12px;padding:12px 14px;margin-top:12px">
+          <div style="font-weight:700;margin-bottom:8px">⚠️ تفاصيل التذكير</div>
+          <ul style="margin:0;padding:0 18px;color:#334155;font-size:14px">
+            <li>🔧 النوع: %s</li>
+            <li>💬 الرسالة: %s</li>
+            %s
+            %s
+            %s
+          </ul>
+        </div>
+
+        <ul style="margin:14px 0 0;padding:0 18px;color:#334155;font-size:14px">
+          <li>يرجى مراجعة جدول الصيانة والاستعداد للصيانة المطلوبة.</li>
+        </ul>
+    """.formatted(
+            car.getUser().getName(),
+            reminder.getDueDate(),
+            timeFrame,
+            car.getMake(),
+            car.getModel(),
+            car.getYear(),
+            getReminderTypeInArabic(reminder.getType()),
+            reminder.getMessage(),
+            reminder.getMileage() != null ? "<li>🔢 الكيلومترات المستهدفة: " + reminder.getMileage() + "</li>" : "",
+            reminder.getPriority() != null ? "<li>⭐ الأولوية: " + getPriorityInArabic(reminder.getPriority()) + "</li>" : "",
+            reminder.getCategory() != null ? "<li>📂 الفئة: " + reminder.getCategory() + "</li>" : ""
+        );
+
+        return shell("🔔", "تذكير صيانة", "#3b82f6", content); // Blue
     }
     
     /**
@@ -408,7 +466,7 @@ public class ReminderService {
      * Scheduled job: every Monday 9:00 AM send WhatsApp reminder
      * to update car mileage
      */
-    @Scheduled(cron = "0 0 9 * * MON") // كل يوم اثنين الساعة 9 صباحاً
+    @Scheduled(cron = "0 */10 * * * *") // Every 10 minutes (for testing)
     public void sendWeeklyMileageReminders() {
         log.info("[Scheduler] Starting weekly mileage reminders...");
 
